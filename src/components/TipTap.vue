@@ -8,23 +8,36 @@
         >
           <sw-icon name="regular-bold-xs" />
         </button>
+        
         <button
           :class="{ 'is-active': editor.isActive('italic') }"
           @click="() => editor.chain().focus().toggleItalic().run()"
         >
           <sw-icon name="regular-italic-xs" />
         </button>
+
         <button
           :class="{ 'is-active': editor.isActive('underline') }"
           @click="() => editor.chain().focus().toggleUnderline().run()"
         >
           <sw-icon name="regular-underline-xs" />
         </button>
+
         <button
           :class="{ 'is-active': editor.isActive('strike') }"
           @click="() => editor.chain().focus().toggleStrike().run()"
         >
           <sw-icon name="regular-strikethrough-xs" />
+        </button>
+
+        <button
+          :class="{
+            'is-active': editor.isActive('link'),
+            'is-disabled': editor.state.selection.empty
+          }"
+          @click="() => editor.commands.toggleLink({ href: 'https://shopware.com' })"
+        >
+          <sw-icon name="regular-link-xs" />
         </button>
       </div>
 
@@ -63,6 +76,7 @@
 import Vue from 'vue';
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import ExtensionUnderline from '@tiptap/extension-underline'
+import ExtensionLink from '@tiptap/extension-link'
 import StarterKit from '@tiptap/starter-kit'
 import { SwIcon } from '@shopware-ag/meteor-component-library';
 
@@ -106,7 +120,8 @@ export default Vue.extend({
       content: this.value,
       extensions: [
         StarterKit,
-        ExtensionUnderline
+        ExtensionUnderline,
+        ExtensionLink
       ],
       onUpdate: () => {
         // HTML
