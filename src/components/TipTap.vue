@@ -79,34 +79,39 @@
       #
       <button @click="addTable">Add table</button>
 
-      <br><br>
-      <button @click="editor.chain().focus().addColumnBefore().run()">
-        addColumnBefore
-      </button>
-      <button @click="editor.chain().focus().addColumnAfter().run()">
-        addColumnAfter
-      </button>
-      <button @click="editor.chain().focus().deleteColumn().run()">
-        deleteColumn
-      </button>
-      <button @click="editor.chain().focus().addRowBefore().run()">
-        addRowBefore
-      </button>
-      <button @click="editor.chain().focus().addRowAfter().run()">
-        addRowAfter
-      </button>
-      <button @click="editor.chain().focus().deleteRow().run()">
-        deleteRow
-      </button>
-      <button @click="editor.chain().focus().mergeCells().run()">
-        mergeCells
-      </button>
-      <button @click="editor.chain().focus().splitCell().run()">
-        splitCell
-      </button>
-      <button @click="editor.chain().focus().mergeOrSplit().run()">
-        mergeOrSplit
-      </button>
+      <template v-if="editor.isActive('table')">
+        <br>
+        <button @click="editor.chain().focus().deleteTable().run()">
+          deleteTable
+        </button>
+        <button @click="editor.chain().focus().addColumnBefore().run()">
+          addColumnBefore
+        </button>
+        <button @click="editor.chain().focus().addColumnAfter().run()">
+          addColumnAfter
+        </button>
+        <button @click="editor.chain().focus().deleteColumn().run()">
+          deleteColumn
+        </button>
+        <button @click="editor.chain().focus().addRowBefore().run()">
+          addRowBefore
+        </button>
+        <button @click="editor.chain().focus().addRowAfter().run()">
+          addRowAfter
+        </button>
+        <button @click="editor.chain().focus().deleteRow().run()">
+          deleteRow
+        </button>
+        <button @click="editor.chain().focus().mergeCells().run()">
+          mergeCells
+        </button>
+        <button @click="editor.chain().focus().splitCell().run()">
+          splitCell
+        </button>
+        <button @click="editor.chain().focus().mergeOrSplit().run()">
+          mergeOrSplit
+        </button>
+      </template>
     </div>
   </div>
 </template>
