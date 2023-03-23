@@ -49,6 +49,13 @@
       class="sw-text-editor__content"
       :editor="editor"
     />
+
+    <div class="sw-text-editor__toolbar sw-text-editor__toolbar-bottom">
+      <div class="sw-text-editor__toolbar-buttons"></div>
+      <div class="sw-text-editor__toolbar-buttons">
+        <p>{{ editor.getText().length }} characters</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -126,10 +133,21 @@ export default Vue.extend({
   align-items: center;
   justify-content: space-between;
   height: 36px;
-  padding-left: 16px;
+  padding: 0 8px;
+  color: var(--color-darkgray-300);
   background-color: var(--color-gray-100);
   border-bottom: 1px solid var(--color-gray-300);
   border-radius: var(--border-radius-default) var(--border-radius-default) 0 0;
+}
+
+.sw-text-editor__toolbar-bottom {
+  border-bottom: none;
+  border-top: 1px solid var(--color-gray-300);
+  border-radius: 0 0 var(--border-radius-default) var(--border-radius-default);
+}
+
+.sw-text-editor__toolbar p {
+  padding: 0 8px;
 }
 
 .sw-text-editor__toolbar-buttons {
@@ -138,6 +156,7 @@ export default Vue.extend({
 
 .sw-text-editor__toolbar button {
   display: flex;
+  justify-content: center;
   width: 32px;
   color: var(--color-gray-800);
   border: none;
