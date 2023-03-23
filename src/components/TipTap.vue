@@ -1,5 +1,5 @@
 <template>
-  <div class="sw-text-editor">
+  <div class="sw-text-editor" v-if="editor">
     <div class="sw-text-editor__toolbar">
       <div class="sw-text-editor__toolbar-buttons">
         <button
@@ -69,6 +69,45 @@
         <p>{{ editor.getText().length }} characters</p>
       </div>
     </div>
+
+    <!-- TODO: just for testing -->
+    <div>
+      Rows:
+      <input type="number" v-model="rowNumber">
+      Columns:
+      <input type="number" v-model="columnNumber">
+      #
+      <button @click="addTable">Add table</button>
+
+      <br><br>
+      <button @click="editor.chain().focus().addColumnBefore().run()">
+        addColumnBefore
+      </button>
+      <button @click="editor.chain().focus().addColumnAfter().run()">
+        addColumnAfter
+      </button>
+      <button @click="editor.chain().focus().deleteColumn().run()">
+        deleteColumn
+      </button>
+      <button @click="editor.chain().focus().addRowBefore().run()">
+        addRowBefore
+      </button>
+      <button @click="editor.chain().focus().addRowAfter().run()">
+        addRowAfter
+      </button>
+      <button @click="editor.chain().focus().deleteRow().run()">
+        deleteRow
+      </button>
+      <button @click="editor.chain().focus().mergeCells().run()">
+        mergeCells
+      </button>
+      <button @click="editor.chain().focus().splitCell().run()">
+        splitCell
+      </button>
+      <button @click="editor.chain().focus().mergeOrSplit().run()">
+        mergeOrSplit
+      </button>
+    </div>
   </div>
 </template>
 
@@ -77,6 +116,10 @@ import Vue from 'vue';
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import ExtensionUnderline from '@tiptap/extension-underline'
 import ExtensionLink from '@tiptap/extension-link'
+import ExtensionTable from '@tiptap/extension-table'
+import ExtensionTableRow from '@tiptap/extension-table-row'
+import ExtensionTableHeader from '@tiptap/extension-table-header'
+import ExtensionTableCell from '@tiptap/extension-table-cell'
 import StarterKit from '@tiptap/starter-kit'
 import { SwIcon } from '@shopware-ag/meteor-component-library';
 
@@ -95,10 +138,14 @@ export default Vue.extend({
 
   data(): {
     editor: Editor,
+    rowNumber: number,
+    columnNumber: number,
   } {
     return {
       // @ts-expect-error - will be defined in mount
       editor: null,
+      rowNumber: 0,
+      columnNumber: 0,
     }
   },
 
@@ -121,7 +168,13 @@ export default Vue.extend({
       extensions: [
         StarterKit,
         ExtensionUnderline,
-        ExtensionLink
+        ExtensionLink,
+        ExtensionTable.configure({
+          resizable: true,
+        }),
+        ExtensionTableRow,
+        ExtensionTableHeader,
+        ExtensionTableCell,
       ],
       onUpdate: () => {
         // HTML
@@ -132,11 +185,20 @@ export default Vue.extend({
 
   beforeDestroy() {
     this.editor.destroy()
+  },
+
+  methods: {
+    addTable() {
+      this.editor.commands.insertTable({
+        rows: this.rowNumber,
+        cols: this.columnNumber,
+      })
+    }
   }
 })
 </script>
 
-<style>
+<style lang="scss">
 .sw-text-editor {
   text-align: start;
   border: 1px solid var(--color-gray-300);
@@ -196,10 +258,72 @@ export default Vue.extend({
 .sw-text-editor__content {
   padding: 16px;
   height: 260px;
+  overflow: scroll;
 }
 
-.sw-text-editor__content:focus-within {
-  /* outline: 1px solid var(--color-shopware-brand-200); */
+.sw-text-editor__content table,
+.sw-text-editor__content th,
+.sw-text-editor__content td {
+  border: 1px solid var(--color-gray-300);
+  min-width: 16px;
+}
+
+.sw-text-editor__content {
+  table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+
+    td,
+    th {
+      min-width: 1em;
+      border: 2px solid #ced4da;
+      padding: 3px 5px;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+
+      > * {
+        margin-bottom: 0;
+      }
+    }
+
+    th {
+      font-weight: bold;
+      text-align: left;
+      background-color: #f1f3f5;
+    }
+
+    .selectedCell:after {
+      z-index: 2;
+      position: absolute;
+      content: "";
+      left: 0; right: 0; top: 0; bottom: 0;
+      background: rgba(200, 200, 255, 0.4);
+      pointer-events: none;
+    }
+
+    .column-resize-handle {
+      position: absolute;
+      right: -2px;
+      top: 0;
+      bottom: -2px;
+      width: 4px;
+      background-color: #adf;
+      pointer-events: none;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .resize-cursor {
+    cursor: ew-resize;
+    cursor: col-resize;
+  }
 }
 
 .ProseMirror.ProseMirror-focused {
