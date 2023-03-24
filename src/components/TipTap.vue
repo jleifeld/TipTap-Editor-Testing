@@ -58,6 +58,22 @@
       </div>
     </div>
 
+    <bubble-menu
+      v-if="editor"
+      :editor="editor"
+      :tippy-options="{ duration: 100 }"
+    >
+      <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+        bold
+      </button>
+      <button @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
+        italic
+      </button>
+      <button @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+        strike
+      </button>
+    </bubble-menu>
+
     <editor-content
       class="sw-text-editor__content"
       :editor="editor"
@@ -118,10 +134,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Editor, EditorContent } from '@tiptap/vue-2'
+import { Editor, EditorContent, BubbleMenu } from '@tiptap/vue-2'
 import ExtensionUnderline from '@tiptap/extension-underline'
 import ExtensionLink from '@tiptap/extension-link'
-import ExtensionTable from '@tiptap/extension-table'
+import SwExtensionTable from '../tiptapExtensions/swTable'
 import ExtensionTableRow from '@tiptap/extension-table-row'
 import ExtensionTableHeader from '@tiptap/extension-table-header'
 import ExtensionTableCell from '@tiptap/extension-table-cell'
@@ -131,6 +147,7 @@ import { SwIcon } from '@shopware-ag/meteor-component-library';
 export default Vue.extend({
   components: {
     EditorContent,
+    BubbleMenu,
     SwIcon
   },
 
@@ -174,8 +191,9 @@ export default Vue.extend({
         StarterKit,
         ExtensionUnderline,
         ExtensionLink,
-        ExtensionTable.configure({
+        SwExtensionTable.configure({
           resizable: true,
+          resizableRowHeight: true,
         }),
         ExtensionTableRow,
         ExtensionTableHeader,
